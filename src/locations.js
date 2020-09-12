@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export default [
   { value: 'London', label: 'London' },
   { value: 'San Francisco', label: 'San Francisco' },

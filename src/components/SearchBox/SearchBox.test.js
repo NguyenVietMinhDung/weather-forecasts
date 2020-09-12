@@ -1,34 +1,22 @@
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import locations from '../../locations';
 import SearchBox from './SearchBox';
 
-let container = null;
+it('renders with label', async () => {
+  let component;
 
-beforeEach(() => {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-});
-
-afterEach(() => {
-  unmountComponentAtNode(container);
-  container.remove();
-  container = null;
-});
-
-it('renders with label', () => {
-  act(() => {
-    render(
+  await act(async () => {
+    component = mount(
       <SearchBox
         defaultValue={locations[0]}
         options={locations}
         onChange={jest.fn()}
         inputId="location"
       />,
-      container,
     );
   });
 
-  expect(container.querySelector('label').innerHTML).toBe('location');
+  expect(component.find('label').text()).toBe('location');
 });

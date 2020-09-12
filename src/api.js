@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com';
 
 const BASE_URL = 'https://www.metaweather.com';

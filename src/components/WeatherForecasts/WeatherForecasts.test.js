@@ -1,64 +1,47 @@
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import WeatherForecasts from './WeatherForecasts';
 
-let container = null;
-beforeEach(() => {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-});
+const DATA_SAMPLE = [
+  {
+    id: 547,
+    weather_state_name: 'Light Cloud',
+    weather_state_abbr: 'lc',
+    applicable_date: '2020-09-13',
+    min_temp: 14.0,
+    max_temp: 24.9,
+  },
+];
 
-afterEach(() => {
-  unmountComponentAtNode(container);
-  container.remove();
-  container = null;
-});
+it('renders successfully', async () => {
+  let component;
 
-it('renders successfully', () => {
-  act(() => {
-    render(
+  await act(async () => {
+    component = mount(
       <WeatherForecasts
         isLoading={false}
         getIcon={jest.fn()}
-        forecasts={[
-          {
-            id: 547,
-            weather_state_name: 'Light Cloud',
-            weather_state_abbr: 'lc',
-            applicable_date: '2020-09-13',
-            min_temp: 14.0,
-            max_temp: 24.9,
-          },
-        ]}
+        forecasts={DATA_SAMPLE}
       />,
-      container,
     );
   });
 
-  expect(container.querySelector('.card-deck')).toBeInTheDocument();
+  expect(component.find('.card-deck')).toHaveLength(1);
 });
 
-it('renders unsuccessfully', () => {
-  act(() => {
-    render(
+it('renders unsuccessfully', async () => {
+  let component;
+
+  await act(async () => {
+    component = mount(
       <WeatherForecasts
         isLoading
         getIcon={jest.fn()}
-        forecasts={[
-          {
-            id: 547,
-            weather_state_name: 'Light Cloud',
-            weather_state_abbr: 'lc',
-            applicable_date: '2020-09-13',
-            min_temp: 14.0,
-            max_temp: 24.9,
-          },
-        ]}
+        forecasts={DATA_SAMPLE}
       />,
-      container,
     );
   });
 
-  expect(container.querySelector('.card-deck')).not.toBeInTheDocument();
+  expect(component.find('.card-deck')).toHaveLength(0);
 });

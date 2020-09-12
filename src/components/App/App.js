@@ -7,6 +7,7 @@ import locations from '../../locations';
 import api from '../../api';
 import SearchBox from '../SearchBox';
 import WeatherForecasts from '../WeatherForecasts';
+import ErrorFallback from '../ErrorFallback';
 
 function App(props) {
   let defaultValue = {
@@ -15,18 +16,21 @@ function App(props) {
   };
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const [forecasts, setForecasts] = useState([]);
 
   const fetchLocationInfoByWoeid = (woeid) => (
     axios
       .get(api.getLocationInfo(woeid))
       .then((res) => res.data)
+      .catch(() => setIsError(true))
   );
 
   const fetchLocationByName = (locationName) => (
     axios
       .get(api.getLocationsByQuery(locationName))
       .then((res) => res.data[0])
+      .catch(() => setIsError(true))
   );
 
   const getWeatherForecast = (locationName) => (
@@ -36,6 +40,7 @@ function App(props) {
         setForecasts(value.consolidated_weather.slice(0, 5));
         setIsLoading(false);
       })
+      .catch(() => setIsError(true))
   );
 
   useEffect(() => {
@@ -49,7 +54,8 @@ function App(props) {
             value: res.data[0].title,
             label: res.data[0].title,
           };
-        });
+        })
+        .catch(() => setIsError(true));
     } else {
       getWeatherForecast(defaultValue.value);
     }
@@ -62,17 +68,23 @@ function App(props) {
 
   return (
     <Container className="app">
-      <SearchBox
-        inputId="location"
-        defaultValue={defaultValue}
-        options={locations}
-        onChange={handleChange}
-      />
-      <WeatherForecasts
-        isLoading={isLoading}
-        forecasts={forecasts}
-        getIcon={api.getIcon}
-      />
+      {isError ? (
+        <ErrorFallback />
+      ) : (
+        <>
+          <SearchBox
+            inputId="location"
+            defaultValue={defaultValue}
+            options={locations}
+            onChange={handleChange}
+          />
+          <WeatherForecasts
+            isLoading={isLoading}
+            forecasts={forecasts}
+            getIcon={api.getIcon}
+          />
+        </>
+      )}
     </Container>
   );
 }
