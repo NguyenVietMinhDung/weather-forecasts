@@ -2,6 +2,7 @@
 
 ## Product Demo
 
+Click [here](http://weather.forecast.sunny.s3-website-us-east-1.amazonaws.com/) to redirect to demo page.
 ```bash
 http://weather.forecast.sunny.s3-website-us-east-1.amazonaws.com/
 ```
