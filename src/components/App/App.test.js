@@ -62,15 +62,17 @@ it('should trigger handleChange event', async () => {
   });
   component.update();
   expect(component.find(WeatherForecasts).prop('forecasts')).toEqual(findByWoeidResponse.consolidated_weather);
-  expect(component.find(WeatherForecasts).prop('isLoading')).toBe(false);
+  expect(component.find(ErrorFallback)).toHaveLength(0);
 
   await act(async () => {
     component.find(SearchBox).prop('onChange')();
   });
   component.update();
+  expect(component.find(ErrorFallback)).toHaveLength(0);
 
   await act(async () => {
     component.find(SearchBox).prop('onChange')({ value: 'Wrong Location', label: 'Wrong Location' });
   });
   component.update();
+  expect(component.find(ErrorFallback)).toHaveLength(1);
 });
