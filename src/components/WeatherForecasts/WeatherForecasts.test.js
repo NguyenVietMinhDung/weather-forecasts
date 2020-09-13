@@ -1,20 +1,12 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
+import dataSamples from '../../constants/dataSamples';
 import WeatherForecasts from './WeatherForecasts';
 
-const DATA_SAMPLE = [
-  {
-    id: 547,
-    weather_state_name: 'Light Cloud',
-    weather_state_abbr: 'lc',
-    applicable_date: '2020-09-13',
-    min_temp: 14.0,
-    max_temp: 24.9,
-  },
-];
+const { findByWoeidResponse } = dataSamples.API[0];
 
-it('renders successfully', async () => {
+it('should render correctly', async () => {
   let component;
 
   await act(async () => {
@@ -22,7 +14,7 @@ it('renders successfully', async () => {
       <WeatherForecasts
         isLoading={false}
         getIcon={jest.fn()}
-        forecasts={DATA_SAMPLE}
+        forecasts={findByWoeidResponse.consolidated_weather}
       />,
     );
   });
@@ -30,7 +22,7 @@ it('renders successfully', async () => {
   expect(component.find('.card-deck')).toHaveLength(1);
 });
 
-it('renders unsuccessfully', async () => {
+it('should show loading icon', async () => {
   let component;
 
   await act(async () => {
@@ -38,7 +30,7 @@ it('renders unsuccessfully', async () => {
       <WeatherForecasts
         isLoading
         getIcon={jest.fn()}
-        forecasts={DATA_SAMPLE}
+        forecasts={findByWoeidResponse.consolidated_weather}
       />,
     );
   });

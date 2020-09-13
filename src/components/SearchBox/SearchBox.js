@@ -12,18 +12,15 @@ const SearchBox = (props) => {
   return (
     <Row className={styles.wrapper}>
       <Col sm={6} md={4} lg={3}>
-        <form data-testid="form">
-          <label className={styles.label} htmlFor={inputId}>{inputId}</label>
-          <Select
-            name={inputId}
-            inputId={inputId}
-            defaultValue={defaultValue}
-            options={options}
-            isClearable
-            placeholder="Search..."
-            onChange={onChange}
-          />
-        </form>
+        <Select
+          name={inputId}
+          inputId={inputId}
+          defaultValue={defaultValue}
+          options={options}
+          isClearable
+          placeholder="Search..."
+          onChange={onChange}
+        />
       </Col>
     </Row>
   );

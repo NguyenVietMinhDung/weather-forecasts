@@ -1,10 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import locations from '../../locations';
+import locations from '../../constants/locations';
 import SearchBox from './SearchBox';
 
-it('renders with label', async () => {
+it('should render correctly', async () => {
   let component;
 
   await act(async () => {
@@ -18,5 +18,5 @@ it('renders with label', async () => {
     );
   });
 
-  expect(component.find('label').text()).toBe('location');
+  expect(component.find('Select')).toHaveLength(1);
 });

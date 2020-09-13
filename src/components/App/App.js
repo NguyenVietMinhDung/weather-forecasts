@@ -1,69 +1,53 @@
 /* eslint react-hooks/exhaustive-deps: 'off' */
 import React, { useState, useEffect } from 'react';
-import { geolocated, geoPropTypes } from 'react-geolocated';
 import Container from 'react-bootstrap/Container';
 import axios from 'axios';
-import locations from '../../locations';
+import defaultValues from '../../constants/defaultValues';
+import locations from '../../constants/locations';
 import api from '../../api';
 import SearchBox from '../SearchBox';
 import WeatherForecasts from '../WeatherForecasts';
 import ErrorFallback from '../ErrorFallback';
 
-function App(props) {
-  let defaultValue = {
-    value: 'Ho Chi Minh City',
-    label: 'Ho Chi Minh City',
-  };
-
+function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [forecasts, setForecasts] = useState([]);
 
-  const fetchLocationInfoByWoeid = (woeid) => (
+  const findByWoeid = (woeid) => (
     axios
-      .get(api.getLocationInfo(woeid))
+      .get(api.getLocationByWoeid(woeid))
       .then((res) => res.data)
       .catch(() => setIsError(true))
   );
 
-  const fetchLocationByName = (locationName) => (
+  const findByName = (name) => (
     axios
-      .get(api.getLocationsByQuery(locationName))
+      .get(api.getLocationsByQuery(name))
       .then((res) => res.data[0])
       .catch(() => setIsError(true))
   );
 
-  const getWeatherForecast = (locationName) => (
-    fetchLocationByName(locationName)
-      .then((value) => fetchLocationInfoByWoeid(value.woeid))
+  const fetchWeatherForecasts = (name) => {
+    setIsLoading(true);
+    findByName(name)
+      .then((value) => findByWoeid(value.woeid))
       .then((value) => {
         setForecasts(value.consolidated_weather.slice(0, 5));
         setIsLoading(false);
       })
-      .catch(() => setIsError(true))
-  );
+      .catch(() => setIsError(true));
+  };
 
   useEffect(() => {
-    const { coords } = props;
-    if (coords) {
-      axios
-        .get(api.getLocationsByCoords(coords.latitude, coords.longitude))
-        .then((res) => {
-          getWeatherForecast(res.data[0].title);
-          defaultValue = {
-            value: res.data[0].title,
-            label: res.data[0].title,
-          };
-        })
-        .catch(() => setIsError(true));
-    } else {
-      getWeatherForecast(defaultValue.value);
-    }
-  }, [props]);
+    fetchWeatherForecasts(defaultValues.DEFAULT_LOCATION);
+  }, []);
 
   const handleChange = (selectedOption) => {
-    setIsLoading(true);
-    getWeatherForecast(selectedOption.value);
+    if (!selectedOption) {
+      return;
+    }
+    fetchWeatherForecasts(selectedOption.value);
   };
 
   return (
@@ -74,7 +58,7 @@ function App(props) {
         <>
           <SearchBox
             inputId="location"
-            defaultValue={defaultValue}
+            defaultValue={defaultValues.DEFAULT_OPTION}
             options={locations}
             onChange={handleChange}
           />
@@ -89,10 +73,4 @@ function App(props) {
   );
 }
 
-App.propTypes = { ...App.propTypes, ...geoPropTypes };
-
-export default geolocated({
-  positionOptions: {
-    enableHighAccuracy: false,
-  },
-})(App);
+export default App;
